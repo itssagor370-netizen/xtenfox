@@ -1,0 +1,183 @@
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>MOBIXPRESS URBAN FINANCE — EMI Schedule</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;900&family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <div class="container">
+        <header class="app-header">
+            <h1 class="app-title">MOBIXPRESS URBAN FINANCE</h1>
+            <p class="app-subtitle">Streetwise Customer Management with EMI schedule</p>
+        </header><div class="tabs" role="tablist">
+        <div class="tab active" data-tab="dashboard"><i class="fas fa-chart-pie"></i> Dashboard</div>
+        <div class="tab" data-tab="customers"><i class="fas fa-users"></i> Customers</div>
+        <div class="tab" data-tab="add-customer"><i class="fas fa-user-plus"></i> Add Customer</div>
+        <div class="tab" data-tab="export"><i class="fas fa-file-export"></i> Export/Import</div>
+    </div>
+
+    <main>
+        <!-- Dashboard -->
+        <section id="dashboard-tab" class="tab-content">
+            <div class="stats-container">
+                <div class="stat-card card">
+                    <div class="stat-label">Total Customers</div>
+                    <div class="stat-value" id="total-customers">0</div>
+                </div>
+                <div class="stat-card card">
+                    <div class="stat-label">Total Amount</div>
+                    <div class="stat-value" id="total-amount">₹0</div>
+                </div>
+                <div class="stat-card card">
+                    <div class="stat-label">Total Profit</div>
+                    <div class="stat-value" id="total-profit">₹0</div>
+                </div>
+                <div class="stat-card card">
+                    <div class="stat-label">Avg. Profit Margin</div>
+                    <div class="stat-value" id="avg-profit">0%</div>
+                </div>
+                <div class="stat-card card">
+                    <div class="stat-label">Total Paid</div>
+                    <div class="stat-value" id="total-paid">₹0</div>
+                </div>
+                <div class="stat-card card">
+                    <div class="stat-label">Total Due</div>
+                    <div class="stat-value" id="total-due">₹0</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-user-friends"></i> Recent Customers</h2>
+                    <button class="btn btn-secondary" id="view-all-btn"><i class="fas fa-eye"></i> View All</button>
+                </div>
+                <div class="customer-grid" id="recent-customers"></div>
+            </div>
+        </section>
+
+        <!-- All customers -->
+        <section id="customers-tab" class="tab-content" style="display:none">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-users"></i> All Customers</h2>
+                    <div style="display:flex;gap:8px;align-items:center">
+                        <input type="text" id="search-input" class="form-input" placeholder="Search customers..." style="min-width:220px">
+                        <select id="status-filter" class="form-input">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="completed">Completed</option>
+                            <option value="defaulted">Defaulted</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="customer-grid" id="all-customers"></div>
+            </div>
+        </section>
+
+        <!-- Add / Edit -->
+        <section id="add-customer-tab" class="tab-content" style="display:none">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-user-plus"></i> Add / Edit Customer</h2>
+                    <div>
+                        <button class="btn btn-secondary" id="clear-form-btn"><i class="fas fa-broom"></i> Clear</button>
+                    </div>
+                </div>
+
+                <form id="customer-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Investor Name</label>
+                            <input id="investorName" class="form-input" placeholder="Investor or Agent name (optional)">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Customer Name *</label>
+                            <input id="customerName" class="form-input" placeholder="Full name" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Device Model *</label>
+                            <input id="deviceModel" class="form-input" placeholder="Device model" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Amount (₹) *</label>
+                            <input type="number" id="amount" class="form-input" placeholder="Loan / Finance amount" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Profit (₹)</label>
+                            <input type="number" id="profit" class="form-input" placeholder="Profit / fee">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Start Date</label>
+                            <input type="date" id="startDate" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tenure (months) *</label>
+                            <input type="number" id="tenure" class="form-input" placeholder="e.g. 9" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select id="status" class="form-input">
+                                <option value="active">Active</option>
+                                <option value="completed">Completed</option>
+                                <option value="defaulted">Defaulted</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Notes</label>
+                        <textarea id="notes" class="form-input" rows="3" placeholder="Any additional information..."></textarea>
+                    </div>
+
+                    <input type="hidden" id="customerId">
+
+                    <div style="display:flex;gap:12px;justify-content:flex-end">
+                        <button type="submit" class="btn btn-primary" id="save-btn"><i class="fas fa-save"></i> Save Customer</button>
+                        <button type="button" class="btn btn-secondary" id="cancel-edit-btn" style="display:none"><i class="fas fa-times"></i> Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Export -->
+        <section id="export-tab" class="tab-content" style="display:none">
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-file-export"></i> Export / Import Data</h2>
+                <p style="color:var(--text-secondary)">Backup or restore your customers as JSON or Excel (.xlsx). Export will download a file. Import will replace current data.</p>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px">
+                    <button class="btn btn-primary" id="export-json"><i class="fas fa-download"></i> Export JSON</button>
+                    <label class="btn btn-secondary" style="cursor:pointer">
+                        <i class="fas fa-upload"></i> Import JSON
+                        <input type="file" id="import-file" accept="application/json" style="display:none">
+                    </label>
+
+                    <button class="btn btn-primary" id="export-xlsx"><i class="fas fa-file-excel"></i> Export Excel</button>
+                    <label class="btn btn-secondary" style="cursor:pointer">
+                        <i class="fas fa-file-excel"></i> Import Excel
+                        <input type="file" id="import-xlsx" accept=".xlsx, .xls" style="display:none">
+                    </label>
+
+                    <button class="btn btn-secondary" id="clear-all"><i class="fas fa-trash"></i> Clear All</button>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<div id="toast-container" style="position:fixed;top:18px;right:18px;z-index:9999"></div>
+<div id="sync-indicator" class="sync-indicator online" style="position:fixed;bottom:18px;right:18px;padding:10px 14px;border-radius:20px;background:var(--card-bg);font-weight:700;color:var(--success)"><i class="fas fa-wifi sync-icon"></i> Online</div>
+
+    <script src="script.js"></script>
+</body>
+</html>
